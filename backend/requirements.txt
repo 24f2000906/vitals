@@ -19,6 +19,7 @@ langchain-core
 langchain-community
 langchain-nvidia-ai-endpoints
 langchain-chroma
+google-genai
 langgraph
 chromadb
 python-multipart

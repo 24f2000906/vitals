@@ -17,7 +17,8 @@ from app.deps import get_current_user
 from app.models import Document, FamilyMember, User
 from app.schemas import DeleteOut, DocumentOut, DownloadUrlOut, ViewUrlOut
 from app.services import storage, vectorstore
-from app.services.parser import parse_with_text, sniff
+from app.services.parser import OcrError, OcrNotConfigured, parse_with_text, sniff
+from app.routers.profile import invalidate_profile_summary
 
 log = logging.getLogger(__name__)
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -87,6 +88,10 @@ async def upload(
 
     try:
         extracted, text = await run_in_threadpool(parse_with_text, data, kind.content_type)
+    except OcrNotConfigured:
+        raise HTTPException(503, "Document reading isn't set up yet: add your Gemini API key to backend/.env.")
+    except OcrError:  # Gemini outage / quota / blocked response; the file itself may be fine
+        raise HTTPException(503, "Couldn't read this document right now. Please try again in a moment.")
     except Exception:
         raise HTTPException(422, "This file could not be read. It may be corrupted or password-protected.")
 
@@ -132,13 +137,16 @@ async def upload(
     # on the document instead of failing (and losing) the upload.
     if text.strip():
         try:
-            await run_in_threadpool(vectorstore.index_document, doc_id, str(user.id), text)
+            await run_in_threadpool(vectorstore.index_document, doc_id, str(user.id), text, member_id)
         except Exception:
             log.exception("Vector indexing failed for document %s", doc_id)
             await run_in_threadpool(_discard_vectors, doc_id)  # no half-indexed documents
             doc.extracted = {**doc.extracted, "notes": [*doc.extracted.get("notes", []), "Saved, but it couldn't be indexed for search yet."]}
             await db.commit()
             await db.refresh(doc)
+
+    # Invalidate cached profile summary for this member so it regenerates on next view
+    await invalidate_profile_summary(db, user.id, member_id)
 
     if doc_status == "Extracting":
         background.add_task(finalize_document, doc.id)
@@ -222,6 +230,8 @@ async def delete_document(doc_id: UUID, user: User = Depends(get_current_user), 
     except Exception:
         log.exception("Hard delete failed for document %s", doc.id)
         raise HTTPException(502, "Couldn't fully delete this document. Nothing was lost; please try again.")
+    target_member_id = doc.member_id
     await db.delete(doc)  # 3. database
     await db.commit()
+    await invalidate_profile_summary(db, user.id, target_member_id)
     return DeleteOut(document_id=str(doc_id))

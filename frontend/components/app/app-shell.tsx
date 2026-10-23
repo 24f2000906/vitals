@@ -17,13 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     else if (status === "authed" && user && !user.setup_complete) router.replace("/auth/setup");
   }, [status, user, router]);
 
-  if (status !== "authed" || !user?.setup_complete) {
-    return (
-      <div className="grid min-h-screen place-items-center text-sm text-muted-foreground" role="status">
-        Opening your vault…
-      </div>
-    );
-  }
+  const isReady = status === "authed" && Boolean(user?.setup_complete);
 
   return (
     <WorkspaceProvider>
@@ -38,7 +32,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             </button>
             <Logo />
           </header>
-          <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 md:py-10">{children}</main>
+          <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 md:py-10">
+            {!isReady ? (
+              <div className="grid min-h-[50vh] place-items-center text-sm text-muted-foreground" role="status">
+                Opening your vault…
+              </div>
+            ) : null}
+            <div className={!isReady ? "hidden" : undefined}>{children}</div>
+          </main>
         </div>
       </div>
     </WorkspaceProvider>

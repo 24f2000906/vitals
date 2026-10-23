@@ -1,8 +1,9 @@
 import logging
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
 from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,10 +22,13 @@ from app.db.session import get_db
 from app.deps import get_current_user, get_setup_user
 from app.models import FamilyMember, PasswordResetOTP, User
 from app.schemas import (
+    CountryCode,
     LoginIn,
     Message,
+    Name,
     OTPRequestIn,
     OTPRequestOut,
+    PhoneDigits,
     RefreshIn,
     ResetIn,
     SetupIn,
@@ -33,6 +37,7 @@ from app.schemas import (
     TokenPair,
     UserOut,
 )
+from app.routers.profile import invalidate_profile_summary
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 log = logging.getLogger("vitals.auth")
@@ -173,3 +178,27 @@ async def verify_reset(payload: ResetIn, db: AsyncSession = Depends(get_db)):
     record.used = True
     await db.commit()
     return Message(message="Password updated. You can sign in with your new password.")
+
+
+class UserUpdateIn(BaseModel):
+    full_name: Optional[Name] = None
+    phone_country_code: Optional[CountryCode] = None
+    phone: Optional[PhoneDigits] = None
+
+
+@router.patch("/me", response_model=UserOut)
+async def update_me(
+    payload: UserUpdateIn,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if payload.full_name is not None:
+        user.full_name = payload.full_name
+    if payload.phone_country_code is not None:
+        user.phone_country_code = payload.phone_country_code
+    if payload.phone is not None:
+        user.phone = payload.phone
+    await db.commit()
+    await db.refresh(user)
+    await invalidate_profile_summary(db, user.id, None)
+    return user

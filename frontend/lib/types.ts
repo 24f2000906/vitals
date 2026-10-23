@@ -64,3 +64,18 @@ export interface VaultDocument {
   created_at: string;
   file_url: string;
 }
+
+export type HistoryKind = "condition" | "treatment" | "allergy";
+export type HistoryStatus = "active" | "resolved";
+
+export interface HistoryEntry {
+  id: number;
+  member_id: number | null;
+  kind: HistoryKind;
+  title: string;
+  status: HistoryStatus;
+  start_date: string | null;
+  end_date: string | null;
+  notes: string | null;
+  created_at: string;
+}

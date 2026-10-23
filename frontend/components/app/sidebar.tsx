@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { FolderLock, LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Plus, ScrollText } from "lucide-react";
+import { FolderLock, LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Plus, ScrollText, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -12,9 +12,10 @@ import { AddMemberDialog } from "./add-member-dialog";
 import { useWorkspace } from "./workspace";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard overview", icon: LayoutDashboard },
-  { href: "/report", label: "Master health report", icon: ScrollText },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/timeline", label: "Health timeline", icon: ScrollText },
   { href: "/documents", label: "Documents vault", icon: FolderLock },
+  { href: "/profile", label: "Health profile", icon: UserRound },
 ];
 
 function Avatar({ name, active, onClick, label }: { name: string; active: boolean; onClick?: () => void; label: string }) {
@@ -84,7 +85,7 @@ export function SidebarBody({ collapsed, onNavigate, onToggle }: { collapsed: bo
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
-              <Icon className="relative size-[18px] shrink-0" />
+              <Icon className="relative size-4.5 shrink-0" />
               {!collapsed && <span className="relative truncate">{label}</span>}
             </Link>
           );

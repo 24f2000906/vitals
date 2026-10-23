@@ -2,7 +2,7 @@ from datetime import date, datetime, timezone
 from typing import Any, Optional
 from uuid import uuid4
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, cast
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Text, cast
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.session import Base
@@ -106,6 +106,25 @@ class Document(Base):
         self.user_id = str(val)
 
 
+class MedicalHistory(Base):
+    __tablename__ = "medical_history"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    member_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("family_members.id", ondelete="CASCADE"), index=True, nullable=True
+    )  # NULL = belongs to account holder
+    kind: Mapped[str] = mapped_column(String(16))   # "condition" | "treatment" | "allergy"
+    title: Mapped[str] = mapped_column(String(160))
+    status: Mapped[str] = mapped_column(String(16), default="active")  # "active" | "resolved"
+    start_date: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)  # ISO date string
+    end_date: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    owner: Mapped[User] = relationship("User")
+
+
 class PasswordResetOTP(Base):
     __tablename__ = "password_reset_otps"
 
@@ -115,3 +134,20 @@ class PasswordResetOTP(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     attempts: Mapped[int] = mapped_column(Integer, default=0)
     used: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class ProfileSummary(Base):
+    __tablename__ = "profile_summaries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    member_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("family_members.id", ondelete="CASCADE"), index=True, nullable=True
+    )  # NULL = belongs to account holder, int = family member
+    summary: Mapped[str] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(String(32), default="nvidia")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    owner: Mapped[User] = relationship("User")
+

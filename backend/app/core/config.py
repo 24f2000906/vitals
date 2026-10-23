@@ -4,7 +4,6 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -40,6 +39,8 @@ class Settings(BaseSettings):
     # --- LLM MODELS ---
     text_model: str = ""
     text_model_api_key: str = ""
+    ocr_model: str = "gemini-3.6-flash"
+    ocr_model_api_key: str = ""
     embedding_model: str = ""
     embedding_model_api_key: str = ""
 

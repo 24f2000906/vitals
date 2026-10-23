@@ -62,3 +62,19 @@ export const resetSchema = z
     confirmPassword: z.string().min(1, "Confirm your new password"),
   })
   .refine((d) => d.newPassword === d.confirmPassword, { path: ["confirmPassword"], message: "Passwords don't match" });
+
+
+export const historySchema = z
+  .object({
+    kind: z.enum(["condition", "treatment", "allergy"], { message: "Select a type" }),
+    title: z.string().trim().min(2, "Enter a name").max(160, "Keep this under 160 characters"),
+    status: z.enum(["active", "resolved"]),
+    start_date: z.string(),
+    end_date: z.string(),
+    notes: z.string().max(500, "Keep notes under 500 characters"),
+  })
+  .refine((d) => !d.start_date || !d.end_date || d.end_date >= d.start_date, {
+    path: ["end_date"],
+    message: "End date is before the start date",
+  });
+export type HistoryInput = z.infer<typeof historySchema>;

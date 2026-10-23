@@ -52,7 +52,7 @@ const spring = { type: "spring", stiffness: 100, damping: 20 } as const;
 function Nav() {
   const cta = useCta();
   const links = [
-    ["Why VITALS", "#purpose"],
+    ["Why Vitals", "#purpose"],
     ["How it works", "#how"],
     ["Features", "#features"],
     ["Safety", "#safety"],
@@ -571,7 +571,13 @@ function Footer() {
             VITALS summarises your records. It can&apos;t diagnose conditions or replace your doctor.
           </p>
         </div>
-        <nav aria-label="Footer" className="flex gap-6 text-sm text-muted-foreground">
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <Link href="/privacy" className="hover:text-foreground">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="hover:text-foreground">
+            Terms of Service
+          </Link>
           {!cta.authed && (
             <Link href="/auth/signin" className="hover:text-foreground">
               Sign in

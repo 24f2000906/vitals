@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useWorkspace } from "@/components/app/workspace";
-import { HorizontalTimeline } from "@/components/report/horizontal-timeline";
-import { ReportPanelView } from "@/components/report/report-panel";
+import { HorizontalTimeline } from "@/components/timeline/horizontal-timeline";
+import { TimelinePanelView } from "@/components/timeline/timeline-panel";
 import { buildReport } from "@/lib/report";
 
 export default function ReportPage() {
@@ -13,7 +13,7 @@ export default function ReportPage() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="font-display text-4xl font-bold tracking-tight">Master health report</h1>
+        <h1 className="font-display text-4xl font-bold tracking-tight">Health Timeline</h1>
         <p className="mt-2 max-w-xl text-muted-foreground">
           A timeline of {activeName}&apos;s reports with generated summaries of what changed. Summaries aren&apos;t a diagnosis; bring anything flagged to your doctor.
         </p>
@@ -29,7 +29,7 @@ export default function ReportPage() {
           to build the timeline.
         </p>
       ) : (
-        <HorizontalTimeline panels={panels.map((p) => <ReportPanelView key={p.id} panel={p} />)} />
+        <HorizontalTimeline panels={panels.map((p) => <TimelinePanelView key={p.id} panel={p} />)} />
       )}
     </div>
   );

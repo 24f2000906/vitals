@@ -1,5 +1,5 @@
-import type { DocumentType, FamilyMember, TokenPair, User, VaultDocument } from "./types";
-import type { MemberInput } from "./schemas";
+import type { DocumentType, FamilyMember, HistoryEntry, TokenPair, User, VaultDocument } from "./types";
+import type { HistoryInput, MemberInput } from "./schemas";
 
 const BASE = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
 const PREFIX = "/api/v1";
@@ -154,6 +154,35 @@ export const api = {
   documentDownloadUrl: (id: string) => request<{ download_url: string }>(`/documents/${id}/download`),
   /** Permanently removes the file, its search index and its record. */
   deleteDocument: (id: string) => request<{ status: "deleted"; document_id: string }>(`/documents/${id}`, { method: "DELETE" }),
+
+  // History
+  listHistory: () => request<HistoryEntry[]>("/history"),
+  addHistory: (memberId: number | null, input: HistoryInput) =>
+    request<HistoryEntry>("/history", {
+      json: {
+        ...input,
+        member_id: memberId,
+        start_date: input.start_date || null,
+        end_date: input.end_date || null,
+        notes: input.notes || null,
+      },
+    }),
+  deleteHistory: (id: number) => request<void>(`/history/${id}`, { method: "DELETE" }),
+
+  // Profile
+  profileSummary: (memberId: number | null, refresh = false) => {
+    const params = new URLSearchParams();
+    if (memberId !== null) params.set("member_id", String(memberId));
+    if (refresh) params.set("refresh", "true");
+    const qs = params.toString();
+    return request<{ summary: string | null; source: "nvidia" | "fallback" | "none" }>(
+      `/profile/summary${qs ? `?${qs}` : ""}`
+    );
+  },
+
+  // User update
+  updateMe: (updates: { full_name?: string; phone_country_code?: string; phone?: string }) =>
+    request<User>("/auth/me", { method: "PATCH", json: updates }),
 };
 
 /** Empty optional fields become null for the API. */

@@ -195,3 +195,41 @@ class DownloadUrlOut(BaseModel):
 class DeleteOut(BaseModel):
     status: Literal["deleted"] = "deleted"
     document_id: str
+
+
+# ---------- medical history ----------
+HistoryKind = Literal["condition", "treatment", "allergy"]
+HistoryStatus = Literal["active", "resolved"]
+
+class HistoryIn(BaseModel):
+    kind: HistoryKind
+    title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=160)]
+    status: HistoryStatus = "active"
+    start_date: Optional[str] = None   # ISO date "YYYY-MM-DD" or ""
+    end_date: Optional[str] = None
+    notes: Optional[Annotated[str, StringConstraints(max_length=500)]] = None
+    member_id: Optional[int] = None
+
+    @field_validator("start_date", "end_date", mode="before")
+    @classmethod
+    def _blank_to_none(cls, v: object) -> Optional[str]:
+        if v == "" or v is None:
+            return None
+        return str(v)
+
+class HistoryOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    member_id: Optional[int] = None
+    kind: HistoryKind
+    title: str
+    status: HistoryStatus
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: datetime
+
+# ---------- profile summary ----------
+class ProfileSummaryOut(BaseModel):
+    summary: Optional[str] = None
+    source: str  # "nvidia" | "fallback" | "none"

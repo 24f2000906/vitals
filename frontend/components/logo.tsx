@@ -1,10 +1,32 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-export function Logo({ compact = false, className }: { compact?: boolean; className?: string }) {
+import { Audiowide } from "next/font/google";
+
+const audiowide = Audiowide({
+  subsets: ["latin"],
+  weight: "400",
+});
+
+export function Logo({
+  compact = false,
+  className,
+}: {
+  compact?: boolean;
+  className?: string;
+}) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5 font-display text-xl font-bold tracking-[0.12em]", className)}>
-    <Image src="/logo.png" width={35} height={35} alt="V" />
-      {!compact && <span>VITALS</span>}
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 text-2xl font-bold tracking-widest",
+        className
+      )}
+    >
+      <Image src="/logo.png" width={40} height={40} alt="V" />
+
+      {!compact && (
+        <span className={audiowide.className}>VITALS</span>
+      )}
+
       {compact && <span className="sr-only">VITALS</span>}
     </span>
   );

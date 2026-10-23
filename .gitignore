@@ -11,6 +11,7 @@ uploads/
 samples
 tests
 migrations
+chroma_db/
 
 test-report
 
@@ -52,3 +53,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+vitals_architecture.svg
+BUILD_PROGRESS.md
+architecture.md

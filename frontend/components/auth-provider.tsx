@@ -12,6 +12,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<User>;
   startSession: (pair: TokenPair) => void;
   signOut: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -60,7 +61,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace("/auth/signin");
   }, [router]);
 
-  const value = useMemo(() => ({ user, status, signIn, startSession, signOut }), [user, status, signIn, startSession, signOut]);
+  const refreshUser = useCallback(async () => {
+    try {
+      const u = await api.me();
+      setUser(u);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const value = useMemo(
+    () => ({ user, status, signIn, startSession, signOut, refreshUser }),
+    [user, status, signIn, startSession, signOut, refreshUser],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

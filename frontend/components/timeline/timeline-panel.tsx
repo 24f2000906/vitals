@@ -4,7 +4,7 @@ import { LEVEL_LABEL, LEVEL_TONE, PARAM_META } from "@/lib/metrics";
 import type { ReportPanel } from "@/lib/report";
 import { formatDate } from "@/lib/utils";
 
-export function ReportPanelView({ panel }: { panel: ReportPanel }) {
+export function TimelinePanelView({ panel }: { panel: ReportPanel }) {
   return (
     <article className="glass w-full max-w-2xl rounded-3xl p-7 shadow-lg shadow-black/5 sm:p-10">
       {panel.subtitle && <p className="text-sm text-muted-foreground">{formatDate(panel.subtitle)}</p>}
