@@ -23,6 +23,7 @@ class User(Base):
     gender: Mapped[Optional[str]] = mapped_column(String(16))
     phone_country_code: Mapped[Optional[str]] = mapped_column(String(8))
     phone: Mapped[Optional[str]] = mapped_column(String(20))
+    share_code: Mapped[str] = mapped_column(String(64), unique=True, index=True, default=lambda: uuid4().hex[:16])
     setup_complete: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
@@ -48,6 +49,7 @@ class FamilyMember(Base):
     phone_country_code: Mapped[Optional[str]] = mapped_column(String(8))
     phone: Mapped[Optional[str]] = mapped_column(String(20))
     relationship_type: Mapped[str] = mapped_column("relationship", String(16))
+    share_code: Mapped[str] = mapped_column(String(64), unique=True, index=True, default=lambda: uuid4().hex[:16])
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     owner: Mapped[User] = relationship(back_populates="family_members")

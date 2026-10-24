@@ -15,6 +15,8 @@ import {
   FileSearch,
   HeartPulse,
   Lock,
+  QrCode,
+  ScanLine,
   ShieldCheck,
   Stethoscope,
   UploadCloud,
@@ -55,6 +57,7 @@ function Nav() {
     ["Why Vitals", "#purpose"],
     ["How it works", "#how"],
     ["Features", "#features"],
+    ["QR Pass", "#qr-scan"],
     ["Safety", "#safety"],
   ];
   return (
@@ -73,6 +76,12 @@ function Nav() {
           </nav>
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <Button asChild variant="outline" size="sm" className="h-10 gap-1.5 border-primary/30 hover:border-primary">
+              <Link href="/scan">
+                <QrCode className="size-4 text-primary" />
+                <span className="hidden sm:inline">Scan QR</span>
+              </Link>
+            </Button>
             {!cta.authed && (
               <Button asChild variant="ghost" className="hidden sm:inline-flex">
                 <Link href="/auth/signin">Sign in</Link>
@@ -474,6 +483,75 @@ function Features() {
 }
 
 /* ------------------------------------------------------------------ */
+/* qr scan pass                                                        */
+/* ------------------------------------------------------------------ */
+
+function QrScanSection() {
+  return (
+    <section id="qr-scan" className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+      <Reveal>
+        <div className="glass relative overflow-hidden rounded-4xl p-8 sm:p-14">
+          <div className="absolute -right-12 -top-12 size-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
+                <QrCode className="size-3.5" /> Permanent Profile QR Pass
+              </div>
+              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+                Instant access in an emergency or clinic visit.
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                Each member in your family vault receives a permanent, unique QR code. Paramedics, clinicians, or family caregivers can scan it with any phone camera to view vital health records, active medications, allergies, and NVIDIA AI summaries—<strong>without needing an account or app</strong>.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Button asChild size="lg" className="h-12 gap-2 px-6">
+                  <Link href="/scan">
+                    <ScanLine className="size-5" /> Open QR Scanner
+                  </Link>
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Works on any smartphone · Zero login required · Live profile sync
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-center">
+              <div className="glass w-full max-w-sm rounded-3xl border border-primary/20 bg-card/60 p-6 shadow-xl backdrop-blur-xl">
+                <div className="flex items-center justify-between border-b border-border pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="size-3 rounded-full bg-primary" />
+                    <span className="font-display text-sm font-semibold">VITALS Health Pass</span>
+                  </div>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">LIVE SCAN</span>
+                </div>
+                <div className="my-6 flex flex-col items-center justify-center rounded-2xl bg-white p-6 shadow-inner">
+                  <QrCode className="size-36 text-[#1c261d]" />
+                  <span className="mt-3 font-mono text-[11px] text-muted-foreground">SCAN WITH CAMERA</span>
+                </div>
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="flex justify-between">
+                    <span>Medical Summary:</span>
+                    <span className="font-medium text-foreground">NVIDIA AI Verified</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Emergency Access:</span>
+                    <span className="font-medium text-primary">24/7 Public Pass</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Document Format:</span>
+                    <span className="font-medium text-foreground">Printable A4 PDF</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* safety                                                              */
 /* ------------------------------------------------------------------ */
 
@@ -604,6 +682,7 @@ export default function Home() {
         <Purpose />
         <HowItWorks />
         <Features />
+        <QrScanSection />
         <Safety />
         <Closing />
       </main>

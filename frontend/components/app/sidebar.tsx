@@ -174,9 +174,6 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="fixed inset-y-0 left-0 z-50 w-72 border-r border-border bg-card shadow-2xl md:hidden"
           >
-            <div className="flex items-center justify-between px-4 pt-3">
-              <ThemeToggle />
-            </div>
             <SidebarBody collapsed={false} onNavigate={onClose} />
           </motion.aside>
         </>

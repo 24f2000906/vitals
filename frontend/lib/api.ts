@@ -183,6 +183,10 @@ export const api = {
   // User update
   updateMe: (updates: { full_name?: string; phone_country_code?: string; phone?: string }) =>
     request<User>("/auth/me", { method: "PATCH", json: updates }),
+
+  // Public share profile (no auth required)
+  publicProfile: (shareCode: string) =>
+    request<import("./types").PublicProfile>(`/public/profile/${encodeURIComponent(shareCode)}`, { anonymous: true }),
 };
 
 /** Empty optional fields become null for the API. */

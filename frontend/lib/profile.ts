@@ -11,6 +11,7 @@ export interface ProfileData {
   gender: string | null;
   email: string | null;
   phone: string | null;
+  shareCode: string;
 }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -38,6 +39,7 @@ export function buildProfile(user: User | null, members: FamilyMember[], memberI
       gender: user.gender ? cap(user.gender) : null,
       email: user.email,
       phone: user.phone ? `${user.phone_country_code ?? ""} ${user.phone}`.trim() : null,
+      shareCode: user.share_code ?? "",
     };
   }
   const m = members.find((x) => x.id === memberId);
@@ -51,6 +53,7 @@ export function buildProfile(user: User | null, members: FamilyMember[], memberI
     gender: cap(m.gender),
     email: m.email,
     phone: m.phone ? `${m.phone_country_code ?? ""} ${m.phone}`.trim() : null,
+    shareCode: m.share_code ?? "",
   };
 }
 

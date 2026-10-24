@@ -9,6 +9,7 @@ export interface User {
   gender: Gender | null;
   phone_country_code: string | null;
   phone: string | null;
+  share_code: string;
   setup_complete: boolean;
 }
 
@@ -28,6 +29,7 @@ export interface FamilyMember {
   phone_country_code: string | null;
   phone: string | null;
   relationship: Relationship;
+  share_code: string;
 }
 
 export type DocStatus = "Parsed" | "Extracting" | "Flagged";
@@ -78,4 +80,30 @@ export interface HistoryEntry {
   end_date: string | null;
   notes: string | null;
   created_at: string;
+}
+
+export interface PublicProfile {
+  share_code: string;
+  name: string;
+  date_of_birth: string | null;
+  age: string | null;
+  gender: string | null;
+  relationship: string | null;
+  document_count: number;
+  history: HistoryEntry[];
+  readings: Array<{
+    name: string;
+    value: number | string;
+    unit?: string;
+    status?: "ok" | "caution" | "high";
+    date?: string;
+  }>;
+  findings: Array<{
+    text: string;
+    level: "ok" | "caution" | "high";
+    category?: string;
+    date?: string;
+  }>;
+  ai_summary: string | null;
+  summary_source: string | null;
 }

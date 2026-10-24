@@ -43,7 +43,7 @@ const DISCLAIMER =
  * Draws (or only measures, when draw=false) the whole page and returns the y position where content ends.
  * The caller tries layouts from roomiest to tightest until the content fits on one page.
  */
-function render(doc: jsPDF, d: PdfInput, generatedAt: string, scale: number, maxItems: number, draw: boolean): number {
+function render(doc: jsPDF, d: PdfInput, generatedAt: string, scale: number, maxItems: number, draw: boolean, qrImage?: string | null): number {
   const lh = (pt: number) => pt * scale * PT * 1.3;
   const font = (pt: number, bold = false, color: RGB = INK) => {
     doc.setFont("helvetica", bold ? "bold" : "normal");
@@ -66,10 +66,19 @@ function render(doc: jsPDF, d: PdfInput, generatedAt: string, scale: number, max
     doc.setFontSize(28);
     doc.setTextColor(255, 255, 255);
     doc.text("Vitals", M, 18.5);
+
+    const rightMargin = qrImage ? W - M - 26 : W - M;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
-    doc.text("Health profile summary", W - M, 13.5, { align: "right" });
-    doc.text(clean(generatedAt), W - M, 19.5, { align: "right" });
+    doc.text("Health profile summary", rightMargin, 13.5, { align: "right" });
+    doc.text(clean(generatedAt), rightMargin, 19.5, { align: "right" });
+
+    if (qrImage) {
+      // High-contrast white card for the permanent QR pass
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(W - M - 23, 2.5, 23, 23, 1.5, 1.5, "F");
+      doc.addImage(qrImage, "PNG", W - M - 22, 3.5, 21, 21);
+    }
   }
   let y = 28 + 6;
 
@@ -227,17 +236,33 @@ export async function downloadProfilePdf(input: PdfInput) {
   const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
   const generatedAt = `Generated ${formatDate(new Date().toISOString().slice(0, 10))}`;
 
+  let qrDataUrl: string | null = null;
+  if (input.profile.shareCode) {
+    try {
+      const QRCode = await import("qrcode");
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://vitals.ai";
+      const shareUrl = `${origin}/share/${input.profile.shareCode}`;
+      qrDataUrl = await QRCode.toDataURL(shareUrl, {
+        margin: 1,
+        width: 140,
+        color: { dark: "#1c261d", light: "#ffffff" },
+      });
+    } catch {
+      /* ignore qr generation failure */
+    }
+  }
+
   // Roomiest layout that still fits on one page: shrink type first, then show fewer entries per list.
   let chosen = { scale: 0.7, items: 2 };
   search: for (const items of [8, 6, 5, 4, 3, 2]) {
     for (const scale of [1, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7]) {
-      if (render(doc, input, generatedAt, scale, items, false) <= CONTENT_LIMIT) {
+      if (render(doc, input, generatedAt, scale, items, false, qrDataUrl) <= CONTENT_LIMIT) {
         chosen = { scale, items };
         break search;
       }
     }
   }
-  render(doc, input, generatedAt, chosen.scale, chosen.items, true);
+  render(doc, input, generatedAt, chosen.scale, chosen.items, true, qrDataUrl);
 
   const slug = input.profile.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "profile";
   doc.setProperties({ title: `Vitals health profile - ${clean(input.profile.name)}`, creator: "VITALS" });

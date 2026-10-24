@@ -21,3 +21,18 @@ async def init_models() -> None:
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+        def _migrate(sync_conn):
+            try:
+                cur = sync_conn.connection.cursor()
+                for table in ["users", "family_members"]:
+                    cur.execute(f"PRAGMA table_info({table})")
+                    cols = [r[1] for r in cur.fetchall()]
+                    if cols and "share_code" not in cols:
+                        cur.execute(f"ALTER TABLE {table} ADD COLUMN share_code VARCHAR(64)")
+                        cur.execute(f"UPDATE {table} SET share_code = lower(hex(randomblob(8))) WHERE share_code IS NULL")
+                        cur.execute(f"CREATE UNIQUE INDEX IF NOT EXISTS ix_{table}_share_code ON {table}(share_code)")
+            except Exception:
+                pass
+
+        await conn.run_sync(_migrate)

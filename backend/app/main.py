@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import test
 from app.core.config import settings
 from app.db.session import init_models
-from app.routers import auth, documents, family, history, profile
+from app.routers import auth, documents, family, history, profile, public_share
 from app.services import storage
 
 log = logging.getLogger(__name__)
@@ -36,6 +36,7 @@ api.include_router(family.router)
 api.include_router(documents.router)
 api.include_router(history.router)
 api.include_router(profile.router)
+api.include_router(public_share.router)
 app.include_router(api)
 app.include_router(test.router)
 

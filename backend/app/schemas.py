@@ -95,6 +95,7 @@ class FamilyMemberOut(BaseModel):
     phone_country_code: Optional[str] = None
     phone: Optional[str] = None
     relationship: Relationship = Field(validation_alias="relationship_type")
+    share_code: str = ""
 
 
 class SetupIn(BaseModel):
@@ -112,6 +113,7 @@ class UserOut(BaseModel):
     gender: Optional[Gender] = None
     phone_country_code: Optional[str] = None
     phone: Optional[str] = None
+    share_code: str = ""
     setup_complete: bool
 
 
@@ -233,3 +235,20 @@ class HistoryOut(BaseModel):
 class ProfileSummaryOut(BaseModel):
     summary: Optional[str] = None
     source: str  # "nvidia" | "fallback" | "none"
+
+
+# ---------- public share profile ----------
+class PublicProfileOut(BaseModel):
+    share_code: str
+    name: str
+    date_of_birth: Optional[date] = None
+    age: Optional[str] = None
+    gender: Optional[str] = None
+    relationship: Optional[str] = None
+    document_count: int = 0
+    history: list[HistoryOut] = []
+    readings: list[dict[str, Any]] = []
+    findings: list[dict[str, Any]] = []
+    ai_summary: Optional[str] = None
+    summary_source: Optional[str] = None
+

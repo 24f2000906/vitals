@@ -7,6 +7,7 @@ import { AiSummary } from "@/components/profile/ai-summary";
 import { EditableDetailsGrid } from "@/components/profile/editable-details-grid";
 import { HistorySection } from "@/components/profile/history-section";
 import { ProfileHeader } from "@/components/profile/profile-header";
+import { ProfileQrCode } from "@/components/profile/profile-qr";
 import { ReportsSummary } from "@/components/profile/reports-summary";
 import { useHistory } from "@/components/profile/use-history";
 import { downloadProfilePdf } from "@/lib/profile-pdf";
@@ -74,6 +75,7 @@ export default function ProfilePage() {
         }}
       />
       <AiSummary memberId={activeMemberId} onSummaryLoaded={setAiSummaryText} />
+      <ProfileQrCode shareCode={profile.shareCode} name={profile.name} />
       <ReportsSummary readings={readings} findings={findings} />
       <HistorySection
         entries={history.entries}
