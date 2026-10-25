@@ -62,11 +62,11 @@ function Nav() {
   ];
   return (
     <div className="flex justify-center top-0">
-      <header className="glass fixed top-2 z-40 w-9/10 backdrop-blur-2xl rounded-2xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-          <Link href="/" aria-label="VITALS home">
+      <header className="glass fixed top-2 z-40 w-11/12 sm:w-9/10 backdrop-blur-2xl rounded-2xl overflow-x-hidden">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-1 sm:px-8">
+          <div className="flex justify-center">
             <Logo />
-          </Link>
+          </div>
           <nav aria-label="Sections" className="hidden items-center gap-7 text-sm md:flex">
             {links.map(([label, href]) => (
               <a key={href} href={href} className="text-muted-foreground transition-colors hover:text-foreground">
@@ -199,7 +199,7 @@ function Hero() {
 
   return (
     <section
-      className="mx-auto grid max-w-6xl items-center gap-14 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-[1.1fr_1fr] lg:pt-24"
+      className="mx-auto grid max-w-6xl items-center gap-14 px-5 pt-25 pb-15 sm:px-8 lg:grid-cols-[1.1fr_1fr] lg:pt-24"
       onPointerMove={(e) => {
         if (reduce) return;
         const r = e.currentTarget.getBoundingClientRect();
@@ -308,11 +308,11 @@ function Purpose() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 85%", "center 50%"] });
   const raw = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const smooth = useSpring(raw, { stiffness: 90, damping: 22 });
-  const progress = reduce ? useMotionValue(1) : smooth; // eslint-disable-line react-hooks/rules-of-hooks
+  const progress = reduce ? useMotionValue(1) : smooth;
   const vaultOpacity = useTransform(progress, [0.3, 1], [0.15, 1]);
 
   return (
-    <section id="purpose" className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-24 sm:px-8 lg:grid-cols-2">
+    <section id="purpose" className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-15 sm:px-8 lg:grid-cols-2">
       <Reveal>
         <h2 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">Right now, your records are everywhere.</h2>
         <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted-foreground">
@@ -323,7 +323,7 @@ function Purpose() {
         </p>
       </Reveal>
 
-      <div ref={ref} className="relative mx-auto h-104 w-full max-w-lg overflow-hidden">
+      <div ref={ref} className="relative mx-auto h-80 w-full max-w-lg overflow-hidden">
         <motion.div
           style={{ opacity: vaultOpacity }}
           className="absolute left-1/2 top-1/2 grid h-60 w-72 -translate-x-1/2 -translate-y-1/2 place-items-end rounded-4xl border-2 border-dashed border-accent bg-muted/50 p-4"
@@ -364,7 +364,7 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section id="how" className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+    <section id="how" className="mx-auto max-w-6xl px-5 py-15 sm:px-8">
       <Reveal>
         <h2 className="max-w-2xl font-display text-4xl font-bold tracking-tight sm:text-5xl">From a crumpled PDF to a clear picture in three steps.</h2>
       </Reveal>
@@ -378,7 +378,7 @@ function HowItWorks() {
         </svg>
         {STEPS.map(({ icon: Icon, title, body }, i) => (
           <Reveal key={title} delay={i * 0.12}>
-            <div className="relative flex h-full flex-col rounded-3xl bg-card/70 p-7">
+            <div className="relative flex h-full flex-col rounded-3xl bg-card/70 p-7 border border-primary">
               <span className="relative z-10 mb-6 grid size-18 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
                 <Icon className="size-8" />
               </span>
@@ -401,7 +401,7 @@ function HowItWorks() {
 function Features() {
   const people = ["AR", "KR", "MR", "SR"];
   return (
-    <section id="features" className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+    <section id="features" className="mx-auto max-w-6xl px-5 py-15 sm:px-8">
       <Reveal>
         <h2 className="max-w-2xl font-display text-4xl font-bold tracking-tight sm:text-5xl">Built around how families actually manage health.</h2>
       </Reveal>
@@ -488,7 +488,7 @@ function Features() {
 
 function QrScanSection() {
   return (
-    <section id="qr-scan" className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+    <section id="qr-scan" className="mx-auto max-w-6xl px-5 py-15 sm:px-8">
       <Reveal>
         <div className="glass relative overflow-hidden rounded-4xl p-8 sm:p-14">
           <div className="absolute -right-12 -top-12 size-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
@@ -569,7 +569,7 @@ function Safety() {
     "Replacing a conversation with your doctor",
   ];
   return (
-    <section id="safety" className="mx-auto max-w-6xl px-5 py-24 sm:px-8">
+    <section id="safety" className="mx-auto max-w-6xl px-5 py-15 sm:px-8">
       <Reveal>
         <div className="glass rounded-4xl p-8 sm:p-12">
           <ShieldCheck className="size-8 text-primary" />
@@ -642,7 +642,7 @@ function Footer() {
   const cta = useCta();
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-5 sm:px-8 md:flex-row md:items-center md:justify-between">
         <div>
           <Logo />
           <p className="mt-3 max-w-md text-xs leading-relaxed text-muted-foreground">
@@ -655,14 +655,6 @@ function Footer() {
           </Link>
           <Link href="/terms" className="hover:text-foreground">
             Terms of Service
-          </Link>
-          {!cta.authed && (
-            <Link href="/auth/signin" className="hover:text-foreground">
-              Sign in
-            </Link>
-          )}
-          <Link href={cta.href} className="hover:text-foreground">
-            {cta.authed ? "Open vault" : "Create account"}
           </Link>
         </nav>
       </div>

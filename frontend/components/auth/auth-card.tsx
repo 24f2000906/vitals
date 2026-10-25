@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { Logo } from "../logo";
 
 export function AuthCard({
   title,
@@ -31,6 +32,9 @@ export function AuthCard({
         transition={float ? { duration: 6, repeat: Infinity, ease: "easeInOut" } : { duration: 0.2 }}
         className="glass rounded-3xl p-7 shadow-xl shadow-black/5 sm:p-9"
       >
+        <div className="sm:hidden flex justify-center mb-4">
+          <Logo  />
+        </div>
         <h1 className="font-display text-3xl font-bold tracking-tight">{title}</h1>
         {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
         <div className="mt-7">{children}</div>

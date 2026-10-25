@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { Audiowide } from "next/font/google";
+import Link from "next/link";
 
 const audiowide = Audiowide({
   subsets: ["latin"],
@@ -15,19 +15,19 @@ export function Logo({
   className?: string;
 }) {
   return (
-    <span
+    <Link href="/"  aria-label="Vitals home" 
       className={cn(
-        "inline-flex items-center gap-1 text-2xl font-bold tracking-widest",
+        "inline-flex items-center gap-0 text-xl md:text-2xl font-bold",
         className
       )}
     >
-      <Image src="/logo.png" width={40} height={40} alt="V" />
+      <img className="h-8 md:h-10" src="/logo.png" alt="Vitals" />
 
       {!compact && (
         <span className={audiowide.className}>VITALS</span>
       )}
 
       {compact && <span className="sr-only">VITALS</span>}
-    </span>
+    </Link>
   );
 }
